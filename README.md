@@ -1,4 +1,4 @@
-# 合成大奶龙 (BigNailong)
+# 后溪奶龙大乱斗 (BigNailong)
 
 可在手机浏览器直接玩的物理合成小游戏。HTML5 Canvas + 原生 JavaScript + CSS，无框架、无后端、无运行时外部依赖。
 
