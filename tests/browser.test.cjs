@@ -38,21 +38,37 @@ async function dragTouch(page, fromX, toX, y, cancel = false) {
     assert.equal(await page.locator('#best').textContent(), '4');
     assert.equal(await page.evaluate(() => __testWorld.bodies.length), 1);
     console.log('PASS desktop click → physical merge → score and best score');
+    await page.waitForFunction(() => document.querySelector('#music').getAttribute('aria-pressed')==='true');
+    await page.locator('#music').click();
+    assert.equal(await page.locator('#music').getAttribute('aria-pressed'),'false');
+    await page.locator('#music').click();
+    await page.waitForFunction(() => document.querySelector('#music').getAttribute('aria-pressed')==='true');
+    assert.ok(await page.evaluate(() => NailongAssets.levels.every(l=>l.texture && l.texture.width===384)));
+    console.log('PASS real Web Audio starts after gesture, music toggles, portraits cached');
     await page.reload(); await page.waitForFunction(() => NailongAssets.levels.every(l => l.image));
     assert.equal(await page.locator('#best').textContent(), '4'); assert.equal(await page.locator('#score').textContent(), '0');
     await captureWorld(page); await page.locator('#game').focus(); await page.keyboard.press('ArrowLeft'); await page.keyboard.press('Space');
     assert.equal(await page.evaluate(() => __testWorld.bodies.length), 1);
-    await page.locator('#show-guide').click(); const t = await page.evaluate(() => __testWorld.time);
+    await page.locator('#show-guide').click(); assert.equal(await page.locator('#music').getAttribute('aria-pressed'),'false'); const t = await page.evaluate(() => __testWorld.time);
     await page.waitForTimeout(400); assert.equal(await page.evaluate(() => __testWorld.time), t);
     await page.keyboard.press('Escape'); assert.equal(await page.locator('#guide').evaluate(e => e.open), false);
-    console.log('PASS persisted record, keyboard controls, modal pauses simulation');
+    await page.waitForFunction(() => document.querySelector('#music').getAttribute('aria-pressed')==='true');
+    // Two independent physical merges in one substep must award the capped combo bonus.
+    await page.evaluate(() => {
+      __testWorld.clear(); __testWorld.time=2;
+      for(const x of [80,110,290,320]) { const b=__testWorld.add(1,x,500); b.born=0; }
+    });
+    await page.waitForFunction(() => Number(document.querySelector('#score').textContent)===10);
+    assert.equal(await page.evaluate(() => __testWorld.bodies.length),2);
+    console.log('PASS persisted record, keyboard, guide pauses music and physics, 2x combo +2');
     await page.evaluate(() => {
       __testWorld.clear();
       [[6,530],[7,416],[6,302],[7,188],[6,74]].forEach(([l,y]) => __testWorld.add(l,210,y));
     });
     await page.waitForFunction(() => !document.querySelector('#game-over').hidden, { timeout: 10000 });
     await page.screenshot({ path: path.join(out, 'game-over.png'), fullPage: true });
-    await page.locator('#restart').click(); assert.equal(await page.locator('#score').textContent(), '0'); assert.equal(await page.locator('#best').textContent(), '4');
+    assert.equal(await page.locator('#music').getAttribute('aria-pressed'),'false');
+    await page.locator('#restart').click(); assert.equal(await page.locator('#score').textContent(), '0'); assert.equal(await page.locator('#best').textContent(), '10');
     assert.equal(await page.locator('#game-over').evaluate(e => e.hidden), true);
     assert.equal(await page.evaluate(() => __testWorld.bodies.length), 0);
     console.log('PASS physical overflowing pile ends game; restart clears pile and retains record');
@@ -86,7 +102,7 @@ async function dragTouch(page, fromX, toX, y, cancel = false) {
     console.log('PASS small phone: entire playfield visible, no horizontal overflow, circular aspect preserved');
     const fallback = await browser.newContext();
     await fallback.addInitScript(() => { Object.defineProperty(window,'localStorage',{get(){throw new Error('storage unavailable');}}); });
-    await fallback.route('**/assets/nailong/level*.svg', route => route.abort());
+    await fallback.route('**/assets/nailong/internal/*.png', route => route.abort());
     const safe = await fallback.newPage(); safe.on('pageerror',e=>errors.push(e.message));
     await safe.goto(base); await safe.waitForTimeout(300); await captureWorld(safe); await safe.locator('#game').click();
     assert.equal(await safe.evaluate(()=>__testWorld.bodies.length),1);

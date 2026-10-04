@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const { levels, draw } = window.NailongAssets;
+  const { levels, draw, preview } = window.NailongAssets;
   const { PhysicsWorld, clamp } = window.NailongPhysics;
   const $ = id => document.getElementById(id);
   const canvas = $('game'), ctx = canvas.getContext('2d');
@@ -9,7 +9,13 @@
   const SAVE_KEY = 'bignainai.best.v1';
   let score = 0, best = 0, highest = 1, current = 1, next = 1, aimX = 210;
   let state = 'loading', cooldown = 0, accumulator = 0, lastTime = 0, overflow = 0;
-  let particles = [], labels = [], celebration = 0, toastUntil = 0;
+  let particles = [], labels = [], rings = [], celebration = 0, toastUntil = 0;
+  let combo=0, lastMerge=-10;
+  const music=new window.NailongAudio.Music(player => {
+    $('music').setAttribute('aria-pressed', String(player.playing));
+    $('music').setAttribute('aria-label', player.enabled ? '关闭背景音乐' : '播放背景音乐');
+  });
+  function resumeMusic() { if(state === 'playing' && !document.hidden && !$('guide').open && music.started) music.play(); }
   let soundEnabled = false, audio = null, touching = false, activePointer = null, pointerStart = null;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   try { best = Math.max(0, Math.floor(Number(localStorage.getItem(SAVE_KEY)) || 0)); if (!Number.isFinite(best)) best = 0; } catch (_) { /* Private browsing may disable storage. */ }
@@ -25,10 +31,13 @@
     const n = Math.random(); return n < 0.4 ? 1 : n < 0.7 ? 2 : n < 0.9 ? 3 : 4;
   }
   function updateNext() {
-    $('next').src = levels[next - 1].src; $('next').alt = `下一只：${levels[next - 1].name}`;
-    $('next-name').textContent = levels[next - 1].name;
+    preview($('next'), next);
+    $('next-name').textContent = `Lv.${next} ${levels[next - 1].name}`;
   }
   function updateEvolution() {
+    $('goal-progress').textContent = highest===11 ? '超级奶龙达成！继续冲击最高分' : `下个目标：${levels[highest].name} · ${highest} / 11`;
+    const active=$('evolution').querySelectorAll('.evolution-item')[highest-1];
+    if(active) $('evolution').scrollTo({left:Math.max(0,active.offsetLeft-$('evolution').offsetLeft-100),behavior:reducedMotion?'auto':'smooth'});
     document.querySelectorAll('.evolution-item').forEach((el, i) => {
       el.classList.toggle('unlocked', i < highest); el.classList.toggle('current', i + 1 === highest);
     });
@@ -50,9 +59,11 @@
     } catch (_) { /* Audio is optional, including when browser policy blocks it. */ }
   }
   function onMerge(body, points) {
-    score += points; saveBest(); updateScores(); sound(330 + body.level * 75, 0.16);
-    labels.push({ x: body.x, y: body.y - body.r * 0.5, text: `+${points}`, life: 0.85 });
+    combo=world.time-lastMerge<=1.4 ? Math.min(combo+1,5) : 1; lastMerge=world.time;
+    const bonus=(combo-1)*2; score += points+bonus; saveBest(); updateScores(); sound(330 + body.level * 75, 0.16);
+    labels.push({ x: body.x, y: body.y - body.r * 0.5, text: combo>1 ? `${combo}连击 +${points+bonus}` : `+${points}`, life: 0.85 });
     if (!reducedMotion) {
+      rings.push({x:body.x,y:body.y,r:body.r,life:.5,color:levels[body.level-1].color});
       for (let i = 0; i < 12; i++) {
         const angle = Math.random() * Math.PI * 2, speed = 40 + Math.random() * 125;
         particles.push({ x: body.x, y: body.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 50, size: 2 + Math.random() * 3, color: i % 2 ? '#e7bf50' : '#97b987', life: 0.5 + Math.random() * 0.3 });
@@ -61,22 +72,22 @@
     if (body.level > highest) {
       highest = body.level; updateEvolution();
       if (highest === levels.length) { celebration = 2.5; showToast('✦ 超级奶龙诞生！继续挑战高分吧', 4); sound(880, 0.5, 'triangle'); }
-      else if (highest >= 6) showToast(`解锁 ${levels[highest - 1].name}！`);
+      else showToast(`解锁 ${levels[highest - 1].name}！`);
     }
   }
   function restart() {
     world.clear(); score = 0; highest = 1; aimX = WIDTH / 2; current = randomLevel(); next = randomLevel();
-    state = 'playing'; cooldown = 0; overflow = 0; particles = []; labels = []; celebration = 0;
+    state = 'playing'; cooldown = 0; overflow = 0; particles = []; labels = []; rings = []; celebration = 0; combo=0; lastMerge=-10;
     touching = false; activePointer = null; pointerStart = null; accumulator = 0; lastTime = performance.now();
     $('game-over').hidden = true; $('toast').hidden = true; toastUntil = 0;
     canvas.removeAttribute('aria-hidden'); canvas.tabIndex = 0;
-    updateScores(); updateNext(); updateEvolution();
+    updateScores(); updateNext(); updateEvolution(); resumeMusic();
   }
   function finish() {
     if (state !== 'playing') return;
-    state = 'over'; touching = false; activePointer = null; pointerStart = null; saveBest(); updateScores();
+    state = 'over'; music.pause(); touching = false; activePointer = null; pointerStart = null; saveBest(); updateScores();
     $('final-score').textContent = score; $('final-best').textContent = best;
-    $('result-dragon').src = levels[highest - 1].src;
+    preview($('result-dragon'),highest);
     $('result-message').textContent = highest === levels.length ? '超级奶龙已达成！再挑战一次你的纪录吧' : `这一局，你合成了${levels[highest - 1].name}`;
     $('result-title').textContent = score > 0 && score === best ? '新纪录，真有你的！' : '休息一下，再来！';
     $('game-over').hidden = false; $('toast').hidden = true;
@@ -89,6 +100,7 @@
   }
   function drop() {
     if (state !== 'playing' || cooldown > 0 || $('guide').open) return;
+    music.play();
     const r = levels[current - 1].radius;
     world.add(current, clamp(aimX, world.left + r, world.right - r), 48, { vy: 25, angle: (Math.random() - 0.5) * 0.14, omega: (Math.random() - 0.5) * 1.2 });
     current = next; next = randomLevel(); updateNext(); cooldown = 0.4; sound(280, 0.075);
@@ -137,6 +149,7 @@
   });
   $('restart').addEventListener('click', () => { restart(); canvas.focus({ preventScroll: true }); });
   $('reset').addEventListener('click', restart);
+  $('music').addEventListener('click', () => { music.toggle(); if(state!=='playing' || $('guide').open) music.pause(); });
   $('sound').addEventListener('click', () => {
     soundEnabled = !soundEnabled;
     $('sound').setAttribute('aria-pressed', String(soundEnabled)); $('sound').setAttribute('aria-label', soundEnabled ? '关闭音效' : '开启音效');
@@ -145,24 +158,26 @@
   });
   $('show-guide').addEventListener('click', () => {
     if ($('guide').open) return;
-    touching = false; activePointer = null; pointerStart = null; $('guide').showModal();
+    touching = false; activePointer = null; pointerStart = null; music.pause(); $('guide').showModal();
   });
   $('close-guide').addEventListener('click', () => $('guide').close());
-  $('guide').addEventListener('close', () => { lastTime = performance.now(); accumulator = 0; });
+  $('guide').addEventListener('close', () => { lastTime = performance.now(); accumulator = 0; resumeMusic(); });
   // Inactive tabs and the collection dialog pause simulation (no background loss).
   document.addEventListener('visibilitychange', () => {
     touching = false; activePointer = null; pointerStart = null; accumulator = 0; lastTime = performance.now();
-    if (document.hidden && audio) audio.suspend().catch(() => {});
+    if (document.hidden) { music.pause(); if(audio) audio.suspend().catch(() => {}); } else resumeMusic();
   });
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) $('control-text').textContent = '移动瞄准 · 点击投放';
-  levels.forEach((level, i) => {
-    const item = document.createElement('div'); item.className = 'evolution-item'; item.title = `Lv.${level.level} ${level.name}`;
-    const img = document.createElement('img'); img.src = level.src; img.alt = level.name; img.width = img.height = 33;
-    const label = document.createElement('small'); label.textContent = String(level.level).padStart(2, '0'); item.append(img, label); $('evolution').append(item);
-    if (i < levels.length - 1) { const arrow = document.createElement('span'); arrow.className = 'evolution-arrow'; arrow.textContent = '›'; arrow.setAttribute('aria-hidden', 'true'); $('evolution').append(arrow); }
-    const guide = document.createElement('div'); guide.className = 'guide-level';
-    guide.innerHTML = `<img src="${level.src}" alt="${level.name}" width="57" height="57"><strong>${level.name}</strong><small>Lv.${level.level} · ${level.level === 1 ? '起始形态' : `合成 +${level.points} 分`}</small>`;
-    $('guide-grid').append(guide);
+  levels.forEach(level => {
+    const item=document.createElement('div'); item.className='evolution-item'; item.title=`Lv.${level.level} ${level.name}`;
+    const portrait=document.createElement('canvas'); portrait.width=portrait.height=128; portrait.setAttribute('role','img');
+    const label=document.createElement('small'); label.textContent=level.name;
+    item.append(portrait,label); $('evolution').append(item);
+    const guide=document.createElement('div'); guide.className='guide-level';
+    const art=document.createElement('canvas'); art.width=art.height=192; art.setAttribute('role','img'); guide.append(art);
+    const name=document.createElement('strong'); name.textContent=level.name; guide.append(name);
+    const info=document.createElement('small'); info.textContent=`Lv.${level.level} · ${level.level===1?'起始形态':`合成 +${level.points} 分`}`; guide.append(info); $('guide-grid').append(guide);
+    window.NailongAssets.ready.then(() => { preview(portrait,level.level); preview(art,level.level); });
   });
   function resize() {
     const rect = canvas.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -195,8 +210,9 @@
       ctx.save(); ctx.globalAlpha = 0.13; draw(ctx, current, aimX, world.floor - r, r); ctx.restore();
     }
     for (const b of world.bodies) {
-      ctx.save(); ctx.shadowColor = '#88774214'; ctx.shadowBlur = 5; ctx.shadowOffsetY = 2; draw(ctx, b.level, b.x, b.y, b.r, b.angle); ctx.restore();
+      ctx.save(); ctx.shadowColor = '#88774214'; ctx.shadowBlur = 5; ctx.shadowOffsetY = 2; const age=world.time-b.born; const scale=reducedMotion ? 1 : 1+Math.sin(age*18)*.12*Math.exp(-age*7); draw(ctx, b.level, b.x, b.y, b.r*scale, b.angle); ctx.restore();
     }
+    for(const ring of rings) { ctx.save(); ctx.globalAlpha=ring.life*1.5; ctx.strokeStyle=ring.color; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(ring.x,ring.y,ring.r+(1-ring.life/.5)*30,0,Math.PI*2); ctx.stroke(); ctx.restore(); }
     for (const p of particles) { ctx.globalAlpha = Math.min(1, p.life * 2); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); }
     ctx.globalAlpha = 1;
     for (const label of labels) {
@@ -220,6 +236,7 @@
       }
       particles.forEach(p => { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 160 * dt; }); particles = particles.filter(p => p.life > 0).slice(-100);
       labels.forEach(l => { l.life -= dt; l.y -= 32 * dt; }); labels = labels.filter(l => l.life > 0).slice(-12);
+      rings.forEach(r=>r.life-=dt); rings=rings.filter(r=>r.life>0).slice(-16);
       celebration = Math.max(0, celebration - dt);
       if (!$('toast').hidden && world.time >= toastUntil) $('toast').hidden = true;
     } else accumulator = 0;

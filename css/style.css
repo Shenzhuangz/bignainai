@@ -10,3 +10,17 @@
 @media(max-height:760px){.game-shell{padding-top:12px}.masthead{margin-bottom:14px}.intro{margin-bottom:14px}.intro h1{font-size:28px}.tagline{display:none}.stage{width:min(100%,calc((100svh - 270px)*.7));margin-inline:auto}}
 @media(max-width:380px){.game-shell{width:calc(100% - 22px);padding-top:16px}.masthead{margin-bottom:22px}.intro h1{font-size:30px}.scoreboard{padding:12px 15px;gap:17px;height:78px}.next-item{gap:6px;padding-left:9px}.next-item img{width:42px;height:42px}.control-hint{font-size:9px}.evolution-arrow{display:none}.collection-note{font-size:8px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+/* Larger portraits, names and a swipeable collection make phone levels readable. */
+canvas:not(#game){touch-action:auto;cursor:default;flex-shrink:0}
+.next-item canvas{width:54px;height:54px}.next-item small{font-size:9px;max-width:100px}
+.result-card>canvas{width:92px;height:92px;margin:0 auto 12px}
+.music-button{border:0;border-radius:10px;padding:0 8px;color:#84927c;background:#f1f4eb;font-size:17px;height:31px;white-space:nowrap}
+.music-button span{font-size:9px;vertical-align:middle}.music-button[aria-pressed=true]{background:#e0edce;color:#416c52}
+.goal-progress{font-size:11px;color:#5e7e55;margin:0 0 9px}
+.evolution{overflow-x:auto;justify-content:flex-start;gap:8px;padding:4px 0 8px;scrollbar-width:thin;scrollbar-color:#cbd7be transparent;touch-action:pan-x}
+.evolution-item{flex:0 0 65px}.evolution-item canvas{width:60px;height:60px;margin:auto;opacity:.8;transition:transform .25s}
+.evolution-item.current canvas{transform:translateY(-3px)}.evolution-item small{font-size:9px;margin-top:3px;color:#758469}
+.guide-level canvas{width:76px;height:76px;margin:0 auto 8px}.guide-level{padding:10px 4px}
+.control-hint{letter-spacing:0;gap:4px}.game-toolbar{padding-inline:12px}.toolbar-buttons{gap:3px}
+@media(max-width:380px){.next-item canvas{width:45px;height:45px}.scoreboard{gap:12px}.next-item{gap:2px;padding-left:7px}.score-item strong{font-size:27px}.best-score strong{font-size:23px}.icon-button{width:28px}.music-button{padding-inline:6px}.control-hint{font-size:9px}}
+@media(max-height:760px){.collection{margin-top:12px}.collection-heading{margin-bottom:6px}.collection-note,footer{display:none}.goal-progress{margin-bottom:4px}.evolution-item canvas{width:47px;height:47px}.evolution-item{flex-basis:56px}}
