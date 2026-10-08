@@ -1,13 +1,12 @@
 /* Original photos stay intact; each portrait is cropped and cached once in Canvas. */
 (() => {
   'use strict';
-  const names = ['小奶龙', '敬礼奶龙', '蝴蝶结奶龙', '潮搭龙', '探险龙', '画画龙', '航海龙', '摩登龙', '飞行龙', '雨衣龙', '超级奶龙'];
+  const names = ['困困噜噜', '汽水噜噜', '西瓜噜噜', '听歌噜噜', '运动噜噜', '学霸噜噜', '睡衣噜噜', '登山噜噜', '恐龙噜噜', '蜜蜂噜噜', '皇冠噜噜'];
   const radii = [21, 27, 34, 42, 50, 59, 69, 81, 94, 108, 123];
-  const colors = ['#ffbd36', '#f2933a', '#f18eb8', '#40bdde', '#46956c', '#ed6161', '#876bc9', '#bd70cf', '#469ee9', '#88bb35', '#efb52d'];
+  const colors = ['#dca354', '#df6c54', '#ea8894', '#809b9e', '#7ba461', '#ce8060', '#72b5b0', '#719ac3', '#86a875', '#dfb958', '#d79b43'];
   const points = [0, 4, 10, 20, 36, 60, 100, 160, 260, 420, 800];
-  const files = ['btn_nl.png', 'salute.png', 'bow.png', ...Array.from({length:7}, (_,i) => `series1_card_${i+2}.png`), 'image_nailoong.png'];
-  const crops = [null, null, null, [600,150,470,470], [280,200,500,500], [790,250,470,470], [580,200,550,550], [510,230,510,510], [490,220,550,550], [465,80,680,680], null];
-  const levels = names.map((name,i) => ({level:i+1,name,radius:radii[i],color:colors[i],points:points[i],src:`assets/nailong/internal/${files[i]}`,crop:crops[i],image:null,texture:null}));
+  const crops = [[25,130,290,260],[35,40,325,325],[45,60,320,320],[40,65,320,320],[35,30,325,325],[40,25,330,330],[60,40,325,325],[55,25,320,320],[30,10,340,340],null,[35,10,335,335]];
+  const levels = names.map((name,i) => ({level:i+1,name,radius:radii[i],color:colors[i],points:points[i],src:`assets/lulu/level${i+1}.jpeg`,crop:crops[i],image:null,texture:null}));
   function cache(level) {
     const canvas = document.createElement('canvas'); canvas.width = canvas.height = 384;
     const ctx = canvas.getContext('2d');
@@ -28,20 +27,21 @@
     if (level.texture) ctx.drawImage(level.texture,-radius,-radius,radius*2,radius*2);
     else {
       ctx.fillStyle=level.color; ctx.fillRect(-radius,-radius,radius*2,radius*2);
-      ctx.fillStyle='#fff8d0'; ctx.beginPath(); ctx.ellipse(0,radius*.25,radius*.6,radius*.5,0,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='#314036'; for(const dx of [-.28,.28]) { ctx.beginPath(); ctx.arc(radius*dx,-radius*.1,radius*.09,0,Math.PI*2); ctx.fill(); }
+      ctx.fillStyle='#f39b35'; ctx.beginPath(); ctx.ellipse(0,radius*.2,radius*.72,radius*.47,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#8b5337'; ctx.beginPath(); ctx.ellipse(0,radius*.1,radius*.15,radius*.06,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#69422d'; for(const dx of [-.28,.28]) { ctx.beginPath(); ctx.arc(radius*dx,-radius*.1,radius*.09,0,Math.PI*2); ctx.fill(); }
     }
     ctx.restore();
     ctx.save(); ctx.strokeStyle=level.color; ctx.lineWidth=Math.max(2,radius*.06); ctx.beginPath(); ctx.arc(x,y,radius-ctx.lineWidth/2,0,Math.PI*2); ctx.stroke();
     // Badges stay upright even while the character tumbles.
     const badge=Math.max(8,radius*.18), bx=x+radius*.62, by=y+radius*.62;
     ctx.fillStyle='#fffef6'; ctx.beginPath(); ctx.arc(bx,by,badge+1,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#263e37'; ctx.font=`800 ${Math.max(10,badge*1.25)}px system-ui`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(number,bx,by+.5); ctx.restore();
+    ctx.fillStyle='#654430'; ctx.font=`800 ${Math.max(10,badge*1.25)}px system-ui`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(number,bx,by+.5); ctx.restore();
   }
   function preview(canvas, number) {
     const ctx=canvas.getContext('2d'), side=canvas.width;
     ctx.clearRect(0,0,side,canvas.height); draw(ctx,number,side/2,side/2,side*.43);
     canvas.setAttribute('aria-label',levels[number-1].name);
   }
-  window.NailongAssets = {levels,ready,draw,preview};
+  window.LuluAssets = {levels,ready,draw,preview};
 })();

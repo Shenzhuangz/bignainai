@@ -1,7 +1,7 @@
 (() => {
   'use strict';
-  const { levels, draw, preview } = window.NailongAssets;
-  const { PhysicsWorld, clamp } = window.NailongPhysics;
+  const { levels, draw, preview } = window.LuluAssets;
+  const { PhysicsWorld, clamp } = window.LuluPhysics;
   const $ = id => document.getElementById(id);
   const canvas = $('game'), ctx = canvas.getContext('2d');
   if (!ctx) { $('control-text').textContent = '浏览器不支持 Canvas，请更新后再试'; return; }
@@ -11,7 +11,7 @@
   let state = 'loading', cooldown = 0, accumulator = 0, lastTime = 0, overflow = 0;
   let particles = [], labels = [], rings = [], celebration = 0, toastUntil = 0;
   let combo=0, lastMerge=-10;
-  const music=new window.NailongAudio.Music(player => {
+  const music=new window.LuluAudio.Music(player => {
     $('music').setAttribute('aria-pressed', String(player.playing));
     $('music').setAttribute('aria-label', player.enabled ? '关闭背景音乐' : '播放背景音乐');
   });
@@ -35,7 +35,7 @@
     $('next-name').textContent = `Lv.${next} ${levels[next - 1].name}`;
   }
   function updateEvolution() {
-    $('goal-progress').textContent = highest===11 ? '超级奶龙达成！继续冲击最高分' : `下个目标：${levels[highest].name} · ${highest} / 11`;
+    $('goal-progress').textContent = highest===11 ? '皇冠噜噜达成！继续冲击最高分' : `下个目标：${levels[highest].name} · ${highest} / 11`;
     const active=$('evolution').querySelectorAll('.evolution-item')[highest-1];
     if(active) $('evolution').scrollTo({left:Math.max(0,active.offsetLeft-$('evolution').offsetLeft-100),behavior:reducedMotion?'auto':'smooth'});
     document.querySelectorAll('.evolution-item').forEach((el, i) => {
@@ -66,12 +66,12 @@
       rings.push({x:body.x,y:body.y,r:body.r,life:.5,color:levels[body.level-1].color});
       for (let i = 0; i < 12; i++) {
         const angle = Math.random() * Math.PI * 2, speed = 40 + Math.random() * 125;
-        particles.push({ x: body.x, y: body.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 50, size: 2 + Math.random() * 3, color: i % 2 ? '#e7bf50' : '#97b987', life: 0.5 + Math.random() * 0.3 });
+        particles.push({ x: body.x, y: body.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 50, size: 2 + Math.random() * 3, color: i % 2 ? '#e7bf50' : '#d58f58', life: 0.5 + Math.random() * 0.3 });
       }
     }
     if (body.level > highest) {
       highest = body.level; updateEvolution();
-      if (highest === levels.length) { celebration = 2.5; showToast('✦ 超级奶龙诞生！继续挑战高分吧', 4); sound(880, 0.5, 'triangle'); }
+      if (highest === levels.length) { celebration = 2.5; showToast('🍊 皇冠噜噜来噜！继续挑战高分吧', 4); sound(880, 0.5, 'triangle'); }
       else showToast(`解锁 ${levels[highest - 1].name}！`);
     }
   }
@@ -88,8 +88,8 @@
     state = 'over'; music.pause(); touching = false; activePointer = null; pointerStart = null; saveBest(); updateScores();
     $('final-score').textContent = score; $('final-best').textContent = best;
     preview($('result-dragon'),highest);
-    $('result-message').textContent = highest === levels.length ? '超级奶龙已达成！再挑战一次你的纪录吧' : `这一局，你合成了${levels[highest - 1].name}`;
-    $('result-title').textContent = score > 0 && score === best ? '新纪录，真有你的！' : '休息一下，再来！';
+    $('result-message').textContent = highest === levels.length ? '皇冠噜噜已达成！再挑战一次你的纪录吧' : `这一局，你合成了${levels[highest - 1].name}`;
+    $('result-title').textContent = score > 0 && score === best ? '新纪录，真有你的！' : '躺一下，再来噜！';
     $('game-over').hidden = false; $('toast').hidden = true;
     canvas.setAttribute('aria-hidden', 'true'); canvas.tabIndex = -1;
     $('restart').focus({ preventScroll: true }); sound(190, 0.3);
@@ -177,7 +177,7 @@
     const art=document.createElement('canvas'); art.width=art.height=192; art.setAttribute('role','img'); guide.append(art);
     const name=document.createElement('strong'); name.textContent=level.name; guide.append(name);
     const info=document.createElement('small'); info.textContent=`Lv.${level.level} · ${level.level===1?'起始形态':`合成 +${level.points} 分`}`; guide.append(info); $('guide-grid').append(guide);
-    window.NailongAssets.ready.then(() => { preview(portrait,level.level); preview(art,level.level); });
+    window.LuluAssets.ready.then(() => { preview(portrait,level.level); preview(art,level.level); });
   });
   function resize() {
     const rect = canvas.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -189,24 +189,24 @@
   function render() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     // Quiet dotted background, container sides and softly rounded floor.
-    ctx.fillStyle = '#e8e9d9';
+    ctx.fillStyle = '#efdac3';
     for (let x = 26; x < WIDTH; x += 24) for (let y = 126; y < HEIGHT - 20; y += 24) { ctx.beginPath(); ctx.arc(x, y, 0.65, 0, Math.PI * 2); ctx.fill(); }
-    ctx.strokeStyle = '#e4e8d9'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(12, 119); ctx.lineTo(12, HEIGHT - 28); ctx.quadraticCurveTo(12, HEIGHT - 17, 25, HEIGHT - 17); ctx.lineTo(WIDTH - 25, HEIGHT - 17); ctx.quadraticCurveTo(WIDTH - 12, HEIGHT - 17, WIDTH - 12, HEIGHT - 28); ctx.lineTo(WIDTH - 12, 119); ctx.stroke();
+    ctx.strokeStyle = '#e9d4bd'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(12, 119); ctx.lineTo(12, HEIGHT - 28); ctx.quadraticCurveTo(12, HEIGHT - 17, 25, HEIGHT - 17); ctx.lineTo(WIDTH - 25, HEIGHT - 17); ctx.quadraticCurveTo(WIDTH - 12, HEIGHT - 17, WIDTH - 12, HEIGHT - 28); ctx.lineTo(WIDTH - 12, 119); ctx.stroke();
     ctx.save(); ctx.setLineDash([5, 6]); ctx.strokeStyle = overflow > 0 ? '#d78669' : '#ddc9a3'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(22, LINE); ctx.lineTo(WIDTH - 22, LINE); ctx.stroke(); ctx.restore();
-    ctx.fillStyle = '#fffdf4'; ctx.fillRect(WIDTH / 2 - 43, LINE - 7, 86, 14);
+    ctx.fillStyle = '#fff8ef'; ctx.fillRect(WIDTH / 2 - 43, LINE - 7, 86, 14);
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '10px "Microsoft YaHei", sans-serif'; ctx.fillStyle = overflow > 0 ? '#ba735c' : '#baa583';
     ctx.fillText(overflow > 0 ? `快满啦！${(2 * (1 - overflow)).toFixed(1)}s` : '堆高警戒线', WIDTH / 2, LINE);
     if (overflow > 0) { ctx.fillStyle = `rgba(220,130,98,${0.035 + overflow * 0.08})`; ctx.fillRect(13, 105, WIDTH - 26, HEIGHT - 123); }
     if (world.bodies.length === 0 && state === 'playing') {
-      ctx.fillStyle = '#b9c1a9'; ctx.font = '11px "Microsoft YaHei", sans-serif'; ctx.fillText('让两只相同的奶龙碰个面吧', WIDTH / 2, 325);
-      ctx.fillStyle = '#d8dfc8'; ctx.font = '26px sans-serif'; ctx.fillText('✦', WIDTH / 2, 292);
+      ctx.fillStyle = '#c0a183'; ctx.font = '11px "Microsoft YaHei", sans-serif'; ctx.fillText('两只一样的噜噜，碰一碰就长大', WIDTH / 2, 325);
+      ctx.fillStyle = '#ecd5b8'; ctx.font = '26px sans-serif'; ctx.fillText('✦', WIDTH / 2, 292);
     }
     if (state === 'playing') {
       const r = levels[current - 1].radius;
-      ctx.save(); ctx.globalAlpha = cooldown > 0 ? 0.38 : 0.8; ctx.strokeStyle = '#b8c5a4'; ctx.lineWidth = 1; ctx.setLineDash([3, 7]);
+      ctx.save(); ctx.globalAlpha = cooldown > 0 ? 0.38 : 0.8; ctx.strokeStyle = '#cfac86'; ctx.lineWidth = 1; ctx.setLineDash([3, 7]);
       ctx.beginPath(); ctx.moveTo(aimX, Math.max(48 + r + 8, LINE + 14)); ctx.lineTo(aimX, world.floor - r); ctx.stroke(); ctx.restore();
       ctx.save(); ctx.globalAlpha = cooldown > 0 ? 0.4 : 1; draw(ctx, current, aimX, 48, r); ctx.restore();
-      ctx.fillStyle = '#b4c19b'; ctx.beginPath(); ctx.moveTo(aimX - 4, 14); ctx.lineTo(aimX + 4, 14); ctx.lineTo(aimX, 19); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#c89a6a'; ctx.beginPath(); ctx.moveTo(aimX - 4, 14); ctx.lineTo(aimX + 4, 14); ctx.lineTo(aimX, 19); ctx.closePath(); ctx.fill();
       ctx.save(); ctx.globalAlpha = 0.13; draw(ctx, current, aimX, world.floor - r, r); ctx.restore();
     }
     for (const b of world.bodies) {
@@ -216,7 +216,7 @@
     for (const p of particles) { ctx.globalAlpha = Math.min(1, p.life * 2); ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); }
     ctx.globalAlpha = 1;
     for (const label of labels) {
-      ctx.globalAlpha = Math.min(1, label.life * 2); ctx.fillStyle = '#5e8550'; ctx.font = 'bold 18px system-ui, sans-serif'; ctx.strokeStyle = '#fffdf4'; ctx.lineWidth = 4;
+      ctx.globalAlpha = Math.min(1, label.life * 2); ctx.fillStyle = '#a8703e'; ctx.font = 'bold 18px system-ui, sans-serif'; ctx.strokeStyle = '#fff8ef'; ctx.lineWidth = 4;
       ctx.strokeText(label.text, label.x, label.y); ctx.fillText(label.text, label.x, label.y);
     }
     ctx.globalAlpha = 1;
@@ -243,6 +243,6 @@
     render(); requestAnimationFrame(frame);
   }
   updateScores();
-  window.NailongAssets.ready.then(restart);
+  window.LuluAssets.ready.then(restart);
   requestAnimationFrame(frame);
 })();

@@ -12,7 +12,7 @@
       try {
         if (!this.context) {
           this.context=new (window.AudioContext || window.webkitAudioContext)();
-          this.master=this.context.createGain(); this.master.gain.value=.17; this.master.connect(this.context.destination);
+          this.master=this.context.createGain(); this.master.gain.value=.14; this.master.connect(this.context.destination);
           this.noise=this.context.createBuffer(1,this.context.sampleRate*.2,this.context.sampleRate);
           const data=this.noise.getChannelData(0); let seed=7341;
           for(let i=0;i<data.length;i++) { seed=(seed*1664525+1013904223)>>>0; data[i]=seed/2147483648-1; }
@@ -54,10 +54,10 @@
     }
     schedule() {
       if(!this.playing) return;
-      const eighth=60/112/2;
-      // Four original bars: Am7, Fmaj7, Cmaj7, G6. A soft music-box lead over a relaxed beat.
-      const chords=[[57,60,64,67],[53,57,60,64],[48,52,55,59],[55,59,62,64]];
-      const melody=[76,null,79,76,72,null,74,76,77,null,76,72,69,null,72,74,76,null,79,83,79,null,76,74,74,null,71,74,79,76,74,null];
+      const eighth=60/96/2;
+      // Four original bars: Cmaj7, Fmaj7, Am7, G6. A soft music-box lead over a relaxed beat.
+      const chords=[[48,52,55,59],[53,57,60,64],[57,60,64,67],[55,59,62,64]];
+      const melody=[72,null,76,null,79,76,null,74,72,null,69,72,77,null,76,null,76,null,72,69,72,null,76,null,74,null,71,null,74,76,74,null];
       // A suspended audio clock may lag; skip stale events instead of queuing a burst.
       if(this.next<this.context.currentTime) this.next=this.context.currentTime+.02;
       while(this.next<this.context.currentTime+.15) {
@@ -70,5 +70,5 @@
       }
     }
   }
-  window.NailongAudio={Music};
+  window.LuluAudio={Music};
 })();

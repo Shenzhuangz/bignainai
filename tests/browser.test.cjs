@@ -9,8 +9,8 @@ const base = process.env.GAME_URL || 'http://127.0.0.1:8000';
 const out = path.join(__dirname, '../test-results'); fs.mkdirSync(out, { recursive: true });
 async function captureWorld(page) {
   await page.evaluate(() => {
-    const original = NailongPhysics.PhysicsWorld.prototype.add;
-    NailongPhysics.PhysicsWorld.prototype.add = function (...args) { window.__testWorld = this; return original.apply(this, args); };
+    const original = LuluPhysics.PhysicsWorld.prototype.add;
+    LuluPhysics.PhysicsWorld.prototype.add = function (...args) { window.__testWorld = this; return original.apply(this, args); };
   });
 }
 async function dragTouch(page, fromX, toX, y, cancel = false) {
@@ -28,7 +28,11 @@ async function dragTouch(page, fromX, toX, y, cancel = false) {
     const context = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
     await context.addInitScript(() => { Math.random = () => 0.2; });
     const page = await context.newPage(); page.on('pageerror', e => errors.push(e.message)); page.on('response', r => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
-    await page.goto(base); await page.waitForFunction(() => document.querySelectorAll('.evolution-item').length === 11 && NailongAssets.levels.every(l => l.image));
+    await page.goto(base); await page.waitForFunction(() => document.querySelectorAll('.evolution-item').length === 11 && LuluAssets.levels.every(l => l.image));
+    assert.equal(await page.title(),'后溪噜噜大乱斗 · Lulu Chill Club');
+    assert.equal(await page.locator('body').innerText().then(t=>t.includes('奶龙')),false);
+    assert.ok(await page.evaluate(()=>LuluAssets.levels.every(l=>l.src.startsWith('assets/lulu/'))));
+    await page.locator('#show-guide').click(); await page.screenshot({path:path.join(out,'lulu-guide.png'),fullPage:true}); await page.keyboard.press('Escape');
     await captureWorld(page);
     const rect = await page.locator('#game').boundingBox();
     await page.mouse.click(rect.x + rect.width / 2, rect.y + 60);
@@ -43,9 +47,9 @@ async function dragTouch(page, fromX, toX, y, cancel = false) {
     assert.equal(await page.locator('#music').getAttribute('aria-pressed'),'false');
     await page.locator('#music').click();
     await page.waitForFunction(() => document.querySelector('#music').getAttribute('aria-pressed')==='true');
-    assert.ok(await page.evaluate(() => NailongAssets.levels.every(l=>l.texture && l.texture.width===384)));
+    assert.ok(await page.evaluate(() => LuluAssets.levels.every(l=>l.texture && l.texture.width===384)));
     console.log('PASS real Web Audio starts after gesture, music toggles, portraits cached');
-    await page.reload(); await page.waitForFunction(() => NailongAssets.levels.every(l => l.image));
+    await page.reload(); await page.waitForFunction(() => LuluAssets.levels.every(l => l.image));
     assert.equal(await page.locator('#best').textContent(), '4'); assert.equal(await page.locator('#score').textContent(), '0');
     await captureWorld(page); await page.locator('#game').focus(); await page.keyboard.press('ArrowLeft'); await page.keyboard.press('Space');
     assert.equal(await page.evaluate(() => __testWorld.bodies.length), 1);
@@ -79,7 +83,7 @@ async function dragTouch(page, fromX, toX, y, cancel = false) {
     const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
     await mobile.addInitScript(() => { Math.random = () => 0.2; });
     const phone = await mobile.newPage(); phone.on('pageerror', e => errors.push(e.message));
-    await phone.goto(base); await phone.waitForFunction(() => NailongAssets.levels.every(l => l.image)); await captureWorld(phone);
+    await phone.goto(base); await phone.waitForFunction(() => LuluAssets.levels.every(l => l.image)); await captureWorld(phone);
     const box = await phone.locator('#game').boundingBox();
     await dragTouch(phone,box.x+box.width/2,box.x+45,box.y+80);
     assert.equal(await phone.evaluate(() => __testWorld.bodies.length),1);
@@ -102,7 +106,7 @@ async function dragTouch(page, fromX, toX, y, cancel = false) {
     console.log('PASS small phone: entire playfield visible, no horizontal overflow, circular aspect preserved');
     const fallback = await browser.newContext();
     await fallback.addInitScript(() => { Object.defineProperty(window,'localStorage',{get(){throw new Error('storage unavailable');}}); });
-    await fallback.route('**/assets/nailong/internal/*.png', route => route.abort());
+    await fallback.route('**/assets/lulu/*.jpeg', route => route.abort());
     const safe = await fallback.newPage(); safe.on('pageerror',e=>errors.push(e.message));
     await safe.goto(base); await safe.waitForTimeout(300); await captureWorld(safe); await safe.locator('#game').click();
     assert.equal(await safe.evaluate(()=>__testWorld.bodies.length),1);

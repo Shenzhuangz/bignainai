@@ -3,52 +3,52 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f4f8f0">
-  <meta name="description" content="一只、两只，合成超级奶龙！免费 HTML5 物理合成小游戏，手机拖动松手即可玩。">
-  <title>后溪奶龙大乱斗 · BigNailong</title>
-  <link rel="icon" type="image/png" href="assets/nailong/internal/btn_nl.png">
-  <link rel="stylesheet" href="css/style.css?v=20261004.2">
-  <script defer src="js/assets.js?v=20261004.2"></script>
-  <script defer src="js/physics.js?v=20261004.2"></script>
-  <script defer src="js/audio.js?v=20261004.2"></script>
-  <script defer src="js/game.js?v=20261004.2"></script>
+  <meta name="theme-color" content="#fff4e7">
+  <meta name="description" content="一只、两只，合成皇冠噜噜！免费 HTML5 物理合成小游戏，手机拖动松手即可玩。">
+  <title>后溪噜噜大乱斗 · Lulu Chill Club</title>
+  <link rel="icon" type="image/jpeg" href="assets/lulu/level11.jpeg">
+  <link rel="stylesheet" href="css/style.css?v=20261008.1">
+  <script defer src="js/assets.js?v=20261008.1"></script>
+  <script defer src="js/physics.js?v=20261008.1"></script>
+  <script defer src="js/audio.js?v=20261008.1"></script>
+  <script defer src="js/game.js?v=20261008.1"></script>
 </head>
-<body data-version="20261004.2">
+<body data-version="20261008.1">
   <main class="game-shell">
     <header class="masthead">
-      <a class="brand" href="./" aria-label="后溪奶龙大乱斗首页"><span class="brand-mark">n.</span><span>后溪奶龙大乱斗<small>HOUXI PLAY CLUB</small></span></a>
-      <span class="edition"><i></i> 随时来一局</span>
+      <a class="brand" href="./" aria-label="后溪噜噜大乱斗首页"><span class="brand-mark"><img src="assets/lulu/level11.jpeg" alt="噜噜" width="38" height="38"></span><span>后溪噜噜大乱斗<small>LULU’S SLOW CLUB</small></span></a>
+      <span class="edition"><i></i> 慢慢来，也很快乐</span>
     </header>
     <section class="intro">
-      <p class="eyebrow">越合越大，快乐加倍</p>
-      <h1>后溪奶龙大乱斗<span class="title-spark">✦</span></h1>
-      <p class="tagline">把小可爱，合成大可爱。</p>
+      <p class="eyebrow">不急，快乐慢慢长大</p>
+      <h1>后溪噜噜大乱斗<span class="title-spark">🍊</span></h1>
+      <p class="tagline">把小小噜噜，合成大大快乐。</p>
     </section>
-    <section class="game-card" aria-label="后溪奶龙大乱斗游戏">
+    <section class="game-card" aria-label="后溪噜噜大乱斗游戏">
       <div class="scoreboard">
         <div class="score-item"><span>本局得分</span><strong id="score">0</strong></div>
         <div class="score-item best-score"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v7a4 4 0 0 1-8 0V4Zm0 2H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 2v5m-4 0h8"/></svg>最高纪录</span><strong id="best">0</strong></div>
-        <div class="next-item"><div><span>下一只</span><small id="next-name">小奶龙</small></div><canvas id="next" width="128" height="128" role="img" aria-label="下一只：小奶龙"></canvas></div>
+        <div class="next-item"><div><span>下一只</span><small id="next-name">困困噜噜</small></div><canvas id="next" width="128" height="128" role="img" aria-label="下一只：困困噜噜"></canvas></div>
       </div>
       <div class="stage" id="stage">
         <canvas id="game" width="420" height="600" tabindex="0" aria-label="游戏区：拖动后松手投放；电脑移动鼠标点击投放，方向键移动，空格投放。">你的浏览器暂不支持 Canvas，请使用新版浏览器。</canvas>
         <div class="status-toast" id="toast" role="status" aria-live="polite" hidden></div>
         <div class="overlay" id="game-over" hidden>
           <section class="result-card" role="dialog" aria-modal="true" aria-labelledby="result-title" tabindex="-1">
-            <canvas id="result-dragon" width="192" height="192" role="img" aria-label="奶龙"></canvas>
-            <p class="eyebrow">快乐不止这一局</p><h2 id="result-title">休息一下，再来！</h2>
-            <p id="result-message">差一点点，就能合成更大的奶龙了</p>
+            <canvas id="result-dragon" width="192" height="192" role="img" aria-label="噜噜"></canvas>
+            <p class="eyebrow">松弛感不止这一局</p><h2 id="result-title">躺一下，再来噜！</h2>
+            <p id="result-message">再碰一碰，就有更大的噜噜啦</p>
             <div class="result-stats"><div><span>本局得分</span><strong id="final-score">0</strong></div><div><span>最高纪录</span><strong id="final-best">0</strong></div></div>
-            <button class="primary-button" id="restart">再来一局 <span>↗</span></button>
+            <button class="primary-button" id="restart">再噜一局 <span>↗</span></button>
           </section>
         </div>
       </div>
-      <div class="game-toolbar"><span class="control-hint"><span class="gesture">↔</span><span id="control-text">拖动瞄准 · 松手投放</span></span><div class="toolbar-buttons"><button id="music" class="music-button" aria-label="播放背景音乐" aria-pressed="false" title="夜色小奶龙 · 原创循环">♫ <span>BGM</span></button><button id="sound" class="icon-button" aria-label="开启音效" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-5 4H3v6h3l5 4V5Zm5 4 5 6m0-6-5 6"/></svg></button><button id="reset" class="icon-button" aria-label="重新开始" title="重新开始 (R)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg></button></div></div>
+      <div class="game-toolbar"><span class="control-hint"><span class="gesture">↔</span><span id="control-text">拖动瞄准 · 松手投放</span></span><div class="toolbar-buttons"><button id="music" class="music-button" aria-label="播放背景音乐" aria-pressed="false" title="噜噜午后 · 原创循环">♫ <span>BGM</span></button><button id="sound" class="icon-button" aria-label="开启音效" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-5 4H3v6h3l5 4V5Zm5 4 5 6m0-6-5 6"/></svg></button><button id="reset" class="icon-button" aria-label="重新开始" title="重新开始 (R)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg></button></div></div>
     </section>
-    <section class="collection" aria-label="奶龙合成链"><div class="collection-heading"><h2><span>✦</span> 奶龙成长记</h2><button id="show-guide">合成图鉴 <span>↗</span></button></div><p class="goal-progress" id="goal-progress">下个目标：敬礼奶龙 · 1 / 11</p><div class="evolution" id="evolution"></div><p class="collection-note">两只一样的奶龙相遇，就会长大一级 <span>·</span> 目标：超级奶龙</p></section>
-    <footer>小小奶龙，大大快乐 <span>✳</span> BIGNAILONG</footer>
+    <section class="collection" aria-label="噜噜合成链"><div class="collection-heading"><h2><span>✦</span> 噜噜摸鱼日记</h2><button id="show-guide">合成图鉴 <span>↗</span></button></div><p class="goal-progress" id="goal-progress">下个目标：汽水噜噜 · 1 / 11</p><div class="evolution" id="evolution"></div><p class="collection-note">两只一样的噜噜相遇，就会长大一级 <span>·</span> 目标：皇冠噜噜</p></section>
+    <footer>小小噜噜，松弛一下 <span>✳</span> LULU CHILL CLUB</footer>
   </main>
-  <dialog id="guide" class="guide-dialog"><div class="guide-header"><div><p class="eyebrow">收集每一份可爱</p><h2>奶龙合成图鉴</h2></div><button id="close-guide" class="icon-button" aria-label="关闭图鉴">×</button></div><p class="guide-description">相同等级碰撞合成。1.4 秒内连续合成，连击额外加分！合成超级奶龙后还可以继续挑战。</p><div id="guide-grid" class="guide-grid"></div><p class="guide-footnote">敬礼、蝴蝶结，还有奶龙去哪玩儿系列。拖动成长栏，看看下一只！</p></dialog>
-  <noscript><p class="noscript">请启用 JavaScript，开始合成奶龙。</p></noscript>
+  <dialog id="guide" class="guide-dialog"><div class="guide-header"><div><p class="eyebrow">收集每一份可爱</p><h2>噜噜合成图鉴</h2></div><button id="close-guide" class="icon-button" aria-label="关闭图鉴">×</button></div><p class="guide-description">相同等级碰撞合成。1.4 秒内连续合成，连击额外加分！合成皇冠噜噜后还可以继续挑战。</p><div id="guide-grid" class="guide-grid"></div><p class="guide-footnote">困困、听歌、登山，还有蜜蜂装。滑动看看下一只噜噜！</p></dialog>
+  <noscript><p class="noscript">请启用 JavaScript，开始合成噜噜。</p></noscript>
 </body>
 </html>

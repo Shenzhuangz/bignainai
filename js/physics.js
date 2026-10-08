@@ -103,5 +103,5 @@
       return { lost: maximum >= 2, progress: clamp(maximum / 2, 0, 1) };
     }
   }
-  window.NailongPhysics = { PhysicsWorld, clamp };
+  window.LuluPhysics = { PhysicsWorld, clamp };
 })();
