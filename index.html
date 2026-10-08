@@ -7,16 +7,16 @@
   <meta name="description" content="一只、两只，合成皇冠噜噜！免费 HTML5 物理合成小游戏，手机拖动松手即可玩。">
   <title>后溪噜噜大乱斗 · Lulu Chill Club</title>
   <link rel="icon" type="image/jpeg" href="assets/lulu/level11.jpeg">
-  <link rel="stylesheet" href="css/style.css?v=20261008.1">
-  <script defer src="js/assets.js?v=20261008.1"></script>
-  <script defer src="js/physics.js?v=20261008.1"></script>
-  <script defer src="js/audio.js?v=20261008.1"></script>
-  <script defer src="js/game.js?v=20261008.1"></script>
+  <link rel="stylesheet" href="css/style.css?v=20261008.2">
+  <script defer src="js/assets.js?v=20261008.2"></script>
+  <script defer src="js/physics.js?v=20261008.2"></script>
+  <script defer src="js/audio.js?v=20261008.2"></script>
+  <script defer src="js/game.js?v=20261008.2"></script>
 </head>
-<body data-version="20261008.1">
+<body data-version="20261008.2">
   <main class="game-shell">
     <header class="masthead">
-      <a class="brand" href="./" aria-label="后溪噜噜大乱斗首页"><span class="brand-mark"><img src="assets/lulu/level11.jpeg" alt="噜噜" width="38" height="38"></span><span>后溪噜噜大乱斗<small>LULU’S SLOW CLUB</small></span></a>
+      <a class="brand" href="./" aria-label="后溪噜噜大乱斗首页"><span class="brand-mark"><img src="assets/lulu/level11.jpeg" alt="噜噜" width="38" height="38"></span><span>后溪噜噜大乱斗<small id="developer-credit" lang="en">DEVELOPED BY SANSHUI</small></span></a>
       <span class="edition"><i></i> 慢慢来，也很快乐</span>
     </header>
     <section class="intro">
@@ -46,7 +46,7 @@
       <div class="game-toolbar"><span class="control-hint"><span class="gesture">↔</span><span id="control-text">拖动瞄准 · 松手投放</span></span><div class="toolbar-buttons"><button id="music" class="music-button" aria-label="播放背景音乐" aria-pressed="false" title="噜噜午后 · 原创循环">♫ <span>BGM</span></button><button id="sound" class="icon-button" aria-label="开启音效" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-5 4H3v6h3l5 4V5Zm5 4 5 6m0-6-5 6"/></svg></button><button id="reset" class="icon-button" aria-label="重新开始" title="重新开始 (R)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg></button></div></div>
     </section>
     <section class="collection" aria-label="噜噜合成链"><div class="collection-heading"><h2><span>✦</span> 噜噜摸鱼日记</h2><button id="show-guide">合成图鉴 <span>↗</span></button></div><p class="goal-progress" id="goal-progress">下个目标：汽水噜噜 · 1 / 11</p><div class="evolution" id="evolution"></div><p class="collection-note">两只一样的噜噜相遇，就会长大一级 <span>·</span> 目标：皇冠噜噜</p></section>
-    <footer>小小噜噜，松弛一下 <span>✳</span> LULU CHILL CLUB</footer>
+    <footer>Developed by Sanshui <span>✳</span> 开发者：三水</footer>
   </main>
   <dialog id="guide" class="guide-dialog"><div class="guide-header"><div><p class="eyebrow">收集每一份可爱</p><h2>噜噜合成图鉴</h2></div><button id="close-guide" class="icon-button" aria-label="关闭图鉴">×</button></div><p class="guide-description">相同等级碰撞合成。1.4 秒内连续合成，连击额外加分！合成皇冠噜噜后还可以继续挑战。</p><div id="guide-grid" class="guide-grid"></div><p class="guide-footnote">困困、听歌、登山，还有蜜蜂装。滑动看看下一只噜噜！</p></dialog>
   <noscript><p class="noscript">请启用 JavaScript，开始合成噜噜。</p></noscript>
