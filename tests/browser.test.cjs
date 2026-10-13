@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
-const base = process.env.GAME_URL || 'http://127.0.0.1:8000';
+const testUrl=new URL(process.env.GAME_URL || 'http://127.0.0.1:8000'); testUrl.searchParams.set('analytics_test','1'); const base=testUrl.href;
 const out = path.join(__dirname, '../test-results'); fs.mkdirSync(out, { recursive: true });
 async function captureWorld(page) {
   await page.evaluate(() => {
@@ -26,7 +26,7 @@ async function dragTouch(page, fromX, toX, y, cancel = false) {
   try {
     const errors = [], failed = [];
     const context = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
-    await context.addInitScript(() => { Math.random = () => 0.2; });
+    await context.addInitScript(endpoint => { Math.random=()=>0.2; if(endpoint)window.LuluAnalyticsConfig={endpoint,isTest:true}; },process.env.ANALYTICS_ENDPOINT||'');
     const page = await context.newPage(); page.on('pageerror', e => errors.push(e.message)); page.on('response', r => { if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`); });
     await page.goto(base); await page.waitForFunction(() => document.querySelectorAll('.evolution-item').length === 11 && LuluAssets.levels.every(l => l.image));
     assert.equal(await page.title(),'后溪噜噜大乱斗 · Lulu Chill Club');
@@ -81,7 +81,7 @@ async function dragTouch(page, fromX, toX, y, cancel = false) {
     for(let i=0;i<25;i++) { await page.mouse.click(rect.x+35+(i*93)%(rect.width-70),rect.y+70); await page.waitForTimeout(425); }
     await page.screenshot({path:path.join(out,'desktop.png'),fullPage:true});
     const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
-    await mobile.addInitScript(() => { Math.random = () => 0.2; });
+    await mobile.addInitScript(endpoint => { Math.random=()=>0.2; if(endpoint)window.LuluAnalyticsConfig={endpoint,isTest:true}; },process.env.ANALYTICS_ENDPOINT||'');
     const phone = await mobile.newPage(); phone.on('pageerror', e => errors.push(e.message));
     await phone.goto(base); await phone.waitForFunction(() => LuluAssets.levels.every(l => l.image)); await captureWorld(phone);
     const box = await phone.locator('#game').boundingBox();

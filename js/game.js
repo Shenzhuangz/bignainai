@@ -74,8 +74,10 @@
       if (highest === levels.length) { celebration = 2.5; showToast('🍊 皇冠噜噜来噜！继续挑战高分吧', 4); sound(880, 0.5, 'triangle'); }
       else showToast(`解锁 ${levels[highest - 1].name}！`);
     }
+    window.LuluAnalytics?.merge(score,highest);
   }
   function restart() {
+    window.LuluAnalytics?.finish('restart',score,highest);
     world.clear(); score = 0; highest = 1; aimX = WIDTH / 2; current = randomLevel(); next = randomLevel();
     state = 'playing'; cooldown = 0; overflow = 0; particles = []; labels = []; rings = []; celebration = 0; combo=0; lastMerge=-10;
     touching = false; activePointer = null; pointerStart = null; accumulator = 0; lastTime = performance.now();
@@ -85,6 +87,7 @@
   }
   function finish() {
     if (state !== 'playing') return;
+    window.LuluAnalytics?.finish('over',score,highest);
     state = 'over'; music.pause(); touching = false; activePointer = null; pointerStart = null; saveBest(); updateScores();
     $('final-score').textContent = score; $('final-best').textContent = best;
     preview($('result-dragon'),highest);
@@ -100,6 +103,8 @@
   }
   function drop() {
     if (state !== 'playing' || cooldown > 0 || $('guide').open) return;
+    window.LuluAnalytics?.begin();
+    window.LuluAnalytics?.drop();
     music.play();
     const r = levels[current - 1].radius;
     world.add(current, clamp(aimX, world.left + r, world.right - r), 48, { vy: 25, angle: (Math.random() - 0.5) * 0.14, omega: (Math.random() - 0.5) * 1.2 });
@@ -228,6 +233,7 @@
   function frame(now) {
     const dt = Math.min(Math.max((now - lastTime) / 1000, 0), 0.05); lastTime = now;
     if (state === 'playing' && !document.hidden && !$('guide').open) {
+      window.LuluAnalytics?.tick(dt);
       accumulator += dt;
       while (accumulator >= STEP && state === 'playing') {
         world.step(STEP); cooldown = Math.max(0, cooldown - STEP);

@@ -36,3 +36,5 @@ canvas:not(#game){touch-action:auto;cursor:default;flex-shrink:0}
 .goal-progress{color:#9a6742}.guide-level{background:#fff4e6;border-color:#f0dfca}.guide-description,.guide-footnote{color:#a08164}
 .collection-heading h2{color:#785339}.status-toast{background:#fff0d7f2;color:#98612e;border-color:#e9c38d}
 @media(max-width:380px){.brand{font-size:12px}.edition{font-size:8px}.intro h1{font-size:29px}}
+
+.analytics-controls{font-size:9px;text-align:center;color:#b09a83;margin:13px 0 0;line-height:1.8}.analytics-controls button{border:0;background:none;color:#9a6742;text-decoration:underline;font-size:9px;padding:3px 6px}.analytics-controls button:disabled{color:#b7a592;text-decoration:none}
